@@ -1,0 +1,34 @@
+#!/bin/bash
+
+SERVICE=$1
+ACTION=$2
+
+declare -A PORT_MAPPING
+PORT_MAPPING[matlabengine]=5577
+PORT_MAPPING[hyperlocation]=6006
+PORT_MAPPING[analytics]=5556
+PORT_MAPPING[connect]=6699
+PORT_MAPPING[nmsplb]=6001
+PORT_MAPPING[configuration]=6000
+PORT_MAPPING[location]=5555
+
+if [ -z $SERVICE ]  || [ -z $ACTION ]; then
+ echo "usage: debugcmx matlabengine|hyperlocation|analytics|connect|nmsplb|configuration|location enable|disable|status"
+ echo " e.g. debugcmx nmsplb enable"
+ exit 4
+fi
+
+
+if [[ $ACTION == "enable" ]]; then
+ echo -e "\nEnabling debug on $SERVICE..."
+ curl  -X PUT http://localhost:${PORT_MAPPING[$SERVICE]}/api/logs/v1/config?category=All --data '{"level":"DEBUG"}' -H "Content-Type: application/json"
+ echo -e "\nDebug enabled!"
+elif [[ $ACTION == "status" ]]; then
+ echo "Getting status of log level..."
+ curl -X GET http://localhost:${PORT_MAPPING[$SERVICE]}/api/logs/v1/config?category=All
+ echo -e "\n"
+else
+ echo "Disabling debug on $SERVICE..."
+ curl -X PUT http://localhost:${PORT_MAPPING[$SERVICE]}/api/logs/v1/config?category=All --data '{"level":"INFO"}' -H "Content-Type: application/json"
+ echo "Debug disabled!"
+fi
