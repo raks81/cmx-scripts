@@ -1,0 +1,5 @@
+#!/bin/bash
+
+wget https://raw.githubusercontent.com/raks81/cmx-scripts/master/debugcmx -o /home/cmxadmin/debugcmx
+echo "PATH=$PATH:/home/cmxadmin/debugcmx" >> ~/.bash_profile
+
